@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "brainsight"
+version = "0.0.1"
+description = "Analysis toolkit for brain activity data."
+authors = ["MMT Analytics <analytics@machinemedicine.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+numpy = "~1.26.1"
+scipy = "~1.11.3"
+PyYAML = "~6.0"
+colorcet = "~3.1.0"
+matplotlib = "~3.8.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

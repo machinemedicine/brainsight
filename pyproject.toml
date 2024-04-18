@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "brainsight"
-version = "0.0.1"
+version = "0.1.0"
 description = "Analysis toolkit for brain activity data."
 authors = ["MMT Analytics <analytics@machinemedicine.com>"]
 readme = "README.md"

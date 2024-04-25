@@ -24,13 +24,14 @@ class Spectrogram(BasePlotter):
         window_sec: float,
         frequency_step: float,
         frequency_band: Optional[Tuple[float, float]],
+        **kwargs,
     ) -> None:
         super().__init__(dataset)
         self.window_sec = window_sec
         self.frequency_step = frequency_step
         self.frequency_band = frequency_band
 
-    def _get_data(self, signal: Signal):
+    def _get_data(self, signal: Signal, **kwargs):
         sfreq = signal.sampling_rate
         fmin, fmax = self.frequency_band or (self.frequency_step, sfreq / 2)
 
@@ -54,50 +55,6 @@ class Spectrogram(BasePlotter):
         )
         return nanpow2db(result.squeeze()), freqs
 
-    def _draw_activity(self, ax: plt.Axes, roi: Tuple[int, int]):
-        ymin, ymax = ax.get_ylim()
-        xmin, xmax = ax.get_xlim()
-        roi_range = set(range(*roi))
-
-        activities = dict(
-            sorted(self.dataset.ACTIVITY.items(), key=lambda item: item[1][0])
-        )
-        i = 1
-        for name, (a_s, a_e) in activities.items():
-            overlap = set(range(a_s, a_e)).intersection(roi_range)
-            if overlap:
-                ax.axvspan(
-                    xmin=a_s,
-                    xmax=a_e,
-                    zorder=1,
-                    alpha=0.2,
-                    color="white",
-                    label=f"{i}: {name}",
-                )
-                ax.vlines(
-                    [a_s, a_e],
-                    ymin,
-                    ymax,
-                    zorder=3,
-                    color="w",
-                    alpha=0.3,
-                    ls=":",
-                )
-                alpha = 1.0 if (i % 2) else 0.8
-                ax.text(
-                    sum(overlap) / len(overlap),
-                    ymax,
-                    s=i,
-                    ha="center",
-                    va="bottom",
-                    alpha=alpha,
-                )
-
-                i += 1
-
-        ax.set_xlim(xmin, xmax)
-        ax.set_ylim(ymin, ymax)
-
     def _plot_ax(
         self,
         ax: plt.Axes,
@@ -106,6 +63,7 @@ class Spectrogram(BasePlotter):
         channel: str,
         roi: Tuple[int, int],
         show_activity: bool = True,
+        **kwargs,
     ):
         spec, freqs = self.get_data(channel=channel, signal=signal)
 

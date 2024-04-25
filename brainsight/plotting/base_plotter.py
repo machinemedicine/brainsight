@@ -9,13 +9,13 @@ from brainsight import Dataset, Signal
 from brainsight.plotting.utils import str_to_ms
 
 
-class BasePlotter:
+class BasePlotter(abc.ABC):
     _single_ax: bool = False
     _horizontal: bool = False
     _base_wh: Tuple[int, int] = (10, 3)
     _use_cache: bool = True
 
-    def __init__(self, dataset: Dataset) -> None:
+    def __init__(self, dataset: Dataset, **kwargs) -> None:
         self.dataset = dataset
         self._data_cache = dict()
 
@@ -104,12 +104,19 @@ class BasePlotter:
 
     @abc.abstractmethod
     def _plot_ax(
-        self, ax: plt.Axes, signal: Signal, channel: str, roi=Tuple[int, int]
+        self,
+        ax: plt.Axes,
+        signal: Signal,
+        channel: str,
+        roi=Tuple[int, int],
+        **kwargs
     ):
         """Function for plotting on a given Axis using the provided Signal"""
 
     @abc.abstractmethod
-    def _plot_fig(self, fig: plt.Figure, axs: np.ndarray, rets: list):
+    def _plot_fig(
+        self, fig: plt.Figure, axs: np.ndarray, rets: list, **kwargs
+    ):
         """Function for plotting on all Axes and the Figure with an axes to
         values returned by the `_plot_ax()` method"""
 

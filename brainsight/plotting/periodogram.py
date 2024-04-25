@@ -27,6 +27,7 @@ class Periodogram(BasePlotter):
         brainwave_bands: Dict[
             str, Tuple[float, float]
         ] = defaults.BRAINWAVE_BANDS,
+        **kwargs,
     ) -> None:
         super().__init__(dataset)
         self.frequency_band = frequency_band
@@ -34,7 +35,7 @@ class Periodogram(BasePlotter):
         self.adaptive = adaptive
         self.brainwave_bands = brainwave_bands
 
-    def _get_data(self, signal: Signal, roi: Tuple[int, int]):
+    def _get_data(self, signal: Signal, roi: Tuple[int, int], **kwargs):
         sfreq = signal.sampling_rate
         fmin, fmax = self.frequency_band
 
@@ -135,6 +136,7 @@ class Periodogram(BasePlotter):
         channel: str,
         roi: Tuple[int, int],
         norm: str = "density",
+        **kwargs,
     ):
         psds, freqs = self.get_data(channel=channel, signal=signal, roi=roi)
 

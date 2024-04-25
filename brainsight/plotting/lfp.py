@@ -20,12 +20,13 @@ class LFP(BasePlotter):
         dataset: Dataset,
         low_freq: Optional[float] = None,
         high_freq: Optional[float] = None,
+        **kwargs,
     ) -> None:
         super().__init__(dataset)
         self.low_freq = low_freq
         self.high_freq = high_freq
 
-    def _get_data(self, signal: Signal):
+    def _get_data(self, signal: Signal, **kwargs):
         values = signal.values
         # Apply filtering if either threshold is set
         if self.low_freq or self.high_freq:
@@ -49,6 +50,8 @@ class LFP(BasePlotter):
             color="orange",
             lw=0.8,
         )
+        ax_acc.set_ylabel("Acceleration [g]")
+
         ax_acc.spines["top"].set_visible(False)
 
         return ax_acc
@@ -62,6 +65,7 @@ class LFP(BasePlotter):
         roi: Tuple[int, int],
         show_activity: bool = True,
         show_accelerometer: bool = True,
+        **kwargs,
     ):
         values = self.get_data(channel=channel, signal=signal)
 

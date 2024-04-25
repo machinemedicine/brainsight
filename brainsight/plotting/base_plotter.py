@@ -1,12 +1,12 @@
 import abc
 from typing import Tuple, Union, Optional
 from copy import deepcopy
-from datetime import datetime, timedelta
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 from brainsight import Dataset, Signal
+from brainsight.plotting.utils import str_to_ms
 
 
 class BasePlotter:
@@ -46,18 +46,6 @@ class BasePlotter:
         axs = np.repeat(axs, nsig) if n == 1 else axs
         return fig, axs
 
-    @staticmethod
-    def str_to_ms(string: str) -> int:
-        """Convert a string timestamp into miliseconds."""
-        start = datetime.strptime("", "")
-        delta = datetime.strptime(string, "%H:%M:%S") - start
-        return int(delta.total_seconds() * 1000)
-
-    @staticmethod
-    def ms_to_str(ms: int) -> int:
-        """Convert a string timestamp into miliseconds."""
-        return str(timedelta(milliseconds=int(ms))).split(".")[0]
-
     def _process_roi(
         self, roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]]
     ) -> Optional[Tuple[int, int]]:
@@ -71,7 +59,7 @@ class BasePlotter:
             out = roi
         # If a tuple of strings, format them into miliseconds
         elif isinstance(roi, tuple) and all(isinstance(r, str) for r in roi):
-            out = [self.str_to_ms(r) for r in roi]
+            out = [str_to_ms(r) for r in roi]
         # If a string return the detected activity ROI
         elif isinstance(roi, str) and roi in self.dataset.ACTIVITY.keys():
             out = self.dataset.ACTIVITY[roi]
@@ -83,7 +71,9 @@ class BasePlotter:
             )
         return deepcopy(out)
 
-    def plot(self, roi: Optional[Union[Tuple[int, int], str]], **kwargs):
+    def plot(
+        self, roi: Optional[Union[Tuple[int, int], str]] = None, **kwargs
+    ):
         """Plot"""
         fig, axs = self._setup_figure()
 
@@ -103,6 +93,9 @@ class BasePlotter:
             )
 
             rets.append(ret)
+
+            ax.spines["top"].set_visible(False)
+            ax.spines["right"].set_visible(False)
 
         self._plot_fig(fig=fig, axs=axs, rets=rets, **kwargs)
 

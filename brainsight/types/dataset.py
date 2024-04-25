@@ -58,9 +58,11 @@ class Dataset:
 
     def __str__(self) -> str:
         sep = "\n  - "
-        return "Dataset (\n  keys: {}\n)".format(
-            "".join([sep + k for k in self._keys])
+        keys = (
+            "".join([sep + k for k in self._keys]) if self._keys else "Empty"
         )
+
+        return "Dataset: {}".format(keys)
 
     def __len__(self) -> int:
         return len(self._keys)

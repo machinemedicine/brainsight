@@ -1,18 +1,15 @@
 from typing import Tuple, Optional
 
 import numpy as np
-import colorcet
 import matplotlib.pyplot as plt
-from matplotlib import colormaps
-from mpl_toolkits.axes_grid1 import make_axes_locatable
-import mne.time_frequency as tf
+from mne.filter import filter_data
 
 from brainsight import Dataset, Signal
 from brainsight.plotting.base_plotter import BasePlotter
-from brainsight.plotting.utils import ms_to_str, nanpow2db
+from brainsight.plotting.utils import ms_to_str
 
 
-class Spectrogram(BasePlotter):
+class LFP(BasePlotter):
     _single_ax = False
     _horizontal = False
     _base_wh = (12, 4)
@@ -21,38 +18,25 @@ class Spectrogram(BasePlotter):
     def __init__(
         self,
         dataset: Dataset,
-        window_sec: float,
-        frequency_step: float,
-        frequency_band: Optional[Tuple[float, float]],
+        low_freq: Optional[float] = None,
+        high_freq: Optional[float] = None,
     ) -> None:
         super().__init__(dataset)
-        self.window_sec = window_sec
-        self.frequency_step = frequency_step
-        self.frequency_band = frequency_band
+        self.low_freq = low_freq
+        self.high_freq = high_freq
 
     def _get_data(self, signal: Signal):
-        sfreq = signal.sampling_rate
-        fmin, fmax = self.frequency_band or (self.frequency_step, sfreq / 2)
-
-        # Prepare frequencies to estimate
-        freqs = np.arange(
-            start=fmin,
-            stop=fmax + self.frequency_step,
-            step=self.frequency_step,
-        )
-        # Make the time window fixed-sized for all frequencies
-        n_cycles = freqs * self.window_sec
-
-        data = signal.values[None, None, ...]
-        result = tf.tfr_array_multitaper(
-            data=data,
-            sfreq=sfreq,
-            freqs=freqs,
-            n_cycles=n_cycles,
-            output="power",
-            verbose=False,
-        )
-        return nanpow2db(result.squeeze()), freqs
+        values = signal.values
+        # Apply filtering if either threshold is set
+        if self.low_freq or self.high_freq:
+            values = filter_data(
+                data=values,
+                sfreq=signal.sampling_rate,
+                l_freq=self.low_freq,
+                h_freq=self.high_freq,
+                verbose=False,
+            )
+        return values
 
     def _draw_activity(self, ax: plt.Axes, roi: Tuple[int, int]):
         ymin, ymax = ax.get_ylim()
@@ -71,7 +55,7 @@ class Spectrogram(BasePlotter):
                     xmax=a_e,
                     zorder=1,
                     alpha=0.2,
-                    color="white",
+                    color="purple",
                     label=f"{i}: {name}",
                 )
                 ax.vlines(
@@ -79,7 +63,7 @@ class Spectrogram(BasePlotter):
                     ymin,
                     ymax,
                     zorder=3,
-                    color="w",
+                    color="purple",
                     alpha=0.3,
                     ls=":",
                 )
@@ -107,17 +91,18 @@ class Spectrogram(BasePlotter):
         roi: Tuple[int, int],
         show_activity: bool = True,
     ):
-        spec, freqs = self.get_data(channel=channel, signal=signal)
+        values = self.get_data(channel=channel, signal=signal)
 
-        extent = [*signal.roi, *freqs[[-1, 0]]]
+        ax.plot(signal.ts, values, color="steelblue", lw=0.8)
 
-        im = ax.imshow(spec, extent=extent, aspect="auto")
-        im.set_cmap(colormaps["cet_rainbow4"])
+        ax.grid(color="black", alpha=0.2)
+
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
 
         ax.set_title(f"Channel: {channel}", ha="left", x=0, fontsize=8)
 
-        ax.set_ylabel("Frequency [Hz]")
-        ax.invert_yaxis()
+        ax.set_ylabel("LFP [µV]")
         ax.set_xlim(*roi)
 
         xticks = ax.get_xticks().astype(int)
@@ -144,22 +129,12 @@ class Spectrogram(BasePlotter):
                     bbox_to_anchor=(1, 1.05),
                 )
 
-        return im
+        return None
 
     def _plot_fig(
         self, fig: plt.Figure, axs: np.ndarray, rets: list, **kwargs
     ):
-        vals = sum([[im.norm.vmin, im.norm.vmax] for im in rets], [])
+        lims = sum([[*ax.get_ylim()] for ax in axs], [])
 
-        for ax, im in zip(axs, rets):
-            im.set_clim(vmin=min(vals), vmax=max(vals))
-            divider = make_axes_locatable(ax)
-            cax = divider.append_axes("right", size="2%", pad=0.05)
-            cax.set_visible(False)
-
-        cax.set_visible(True)
-        fig.colorbar(
-            im,
-            cax=cax,
-            label="PSD [$\mathrm{dB}\ $$\mathrm{{µV²/Hz}}$]",
-        )
+        for ax in axs:
+            ax.set_ylim(min(lims), max(lims))

@@ -1,4 +1,4 @@
-from typing import Tuple, Optional
+from typing import Tuple, Optional, Union
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -38,6 +38,21 @@ class LFP(BasePlotter):
             )
         return values
 
+    def _draw_accelerometer(self, ax: plt.Axes) -> plt.Axes:
+        """Draws the Accelerometer signal on a new twin Ax"""
+        ax_acc = ax.twinx()
+
+        # Plot the accelerometer signal.
+        ax_acc.plot(
+            self.dataset.ACCELEROMETER.ts,
+            self.dataset.ACCELEROMETER.values,
+            color="orange",
+            lw=0.8,
+        )
+        ax_acc.spines["top"].set_visible(False)
+
+        return ax_acc
+
     def _plot_ax(
         self,
         ax: plt.Axes,
@@ -46,10 +61,15 @@ class LFP(BasePlotter):
         channel: str,
         roi: Tuple[int, int],
         show_activity: bool = True,
+        show_accelerometer: bool = True,
     ):
         values = self.get_data(channel=channel, signal=signal)
 
         ax.plot(signal.ts, values, color="steelblue", lw=0.8)
+
+        ax_acc = self._draw_accelerometer(ax=ax)
+        if not show_accelerometer:
+            ax_acc.set_visible(False)
 
         ax.grid(color="black", alpha=0.2)
 
@@ -91,12 +111,24 @@ class LFP(BasePlotter):
         else:
             ax.tick_params(labelbottom=False)
 
-        return None
+        return ax_acc
 
     def _plot_fig(
-        self, fig: plt.Figure, axs: np.ndarray, rets: list, **kwargs
+        self,
+        fig: plt.Figure,
+        axs: np.ndarray,
+        rets: list,
+        **kwargs,
     ):
         lims = sum([[*ax.get_ylim()] for ax in axs], [])
-
+        ymin, ymax = min(lims), max(lims)
         for ax in axs:
-            ax.set_ylim(min(lims), max(lims))
+            ax.set_ylim(ymin, ymax)
+
+        # Align y=0 of the new axis with the old's one.
+        # NOTE: Assumes both axes cover y=0. It should normally be the case.
+        lims = sum([[*ax_acc.get_ylim()] for ax_acc in rets], [])
+        ymax_acc = max(lims)
+        ymin_acc = ymax_acc * (ymin / ymax)
+        for ax_acc in rets:
+            ax_acc.set_ylim(ymin_acc, ymax_acc)

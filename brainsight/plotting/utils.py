@@ -61,27 +61,26 @@ def draw_activity(
             ticks[i] = sum(overlap) / len(overlap)
             i += 1
 
-    ax_ticks.set_xticks(
-        ticks=list(ticks.values()), labels=list(ticks.keys()), fontsize=8
-    )
+    if ticks:
+        ax_ticks.spines["top"].set_visible(False)
+        ax_ticks.spines["right"].set_visible(False)
 
-    ax_ticks.set_xlim(xmin, xmax)
-    ax.set_xlim(xmin, xmax)
-    ax.set_ylim(ymin, ymax)
-
-    ax_ticks.spines["top"].set_visible(False)
-    ax_ticks.spines["right"].set_visible(False)
-
-    if ax_i:
-        ax_ticks.tick_params(top=False, labeltop=False)
-    else:
-        legend_no_handles(
-            ax=ax,
-            ncols=4,
-            fontsize=8,
-            loc="lower right",
-            bbox_to_anchor=(1, 1.1),
-            borderaxespad=0.0,
+        ax_ticks.set_xlim(xmin, xmax)
+        ax_ticks.set_xticks(
+            ticks=list(ticks.values()), labels=list(ticks.keys()), fontsize=8
         )
+        if ax_i:
+            ax_ticks.tick_params(top=False, labeltop=False)
+        else:
+            legend_no_handles(
+                ax=ax,
+                ncols=4,
+                fontsize=8,
+                loc="lower right",
+                bbox_to_anchor=(1, 1.1),
+                borderaxespad=0.0,
+            )
+    else:
+        ax_ticks.set_visible(False)
 
     return ax_ticks

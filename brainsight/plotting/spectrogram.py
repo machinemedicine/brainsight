@@ -9,7 +9,7 @@ import mne.time_frequency as tf
 
 from brainsight import Dataset, Signal
 from brainsight.plotting.base_plotter import BasePlotter
-from brainsight.plotting.utils import ms_to_str, nanpow2db
+from brainsight.plotting.utils import ms_to_str, nanpow2db, draw_activity
 
 
 class Spectrogram(BasePlotter):
@@ -114,9 +114,19 @@ class Spectrogram(BasePlotter):
         im = ax.imshow(spec, extent=extent, aspect="auto")
         im.set_cmap(colormaps["cet_rainbow4"])
 
-        ax.set_title(f"Channel: {channel}", ha="left", x=0, fontsize=8)
+        ax.annotate(
+            f"Channel:\n{channel}",
+            xy=(0, 1),
+            xytext=(3, -3),
+            va="top",
+            xycoords="axes fraction",
+            textcoords="offset points",
+            color="white",
+            fontweight="medium",
+            fontsize=9,
+        )
 
-        ax.set_ylabel("Frequency [Hz]")
+        ax.set_ylabel(f"Frequency [Hz]")
         ax.invert_yaxis()
         ax.set_xlim(*roi)
 
@@ -126,7 +136,15 @@ class Spectrogram(BasePlotter):
         ax.set_xlim(*roi)
 
         if show_activity:
-            self._draw_activity(ax=ax, roi=roi)
+            ax_ticks = draw_activity(
+                activity_dict=self.dataset.ACTIVITY,
+                ax=ax,
+                roi=roi,
+                ax_i=ax_i,
+                alpha=0.2,
+                color="white",
+                zorder=1,
+            )
 
         if ax_i:
             ax.set_xlabel("Time [HH:MM:SS]")
@@ -134,25 +152,21 @@ class Spectrogram(BasePlotter):
 
         else:
             ax.tick_params(labelbottom=False)
-            if show_activity:
-                ax.legend(
-                    ncols=4,
-                    fontsize=8,
-                    handlelength=0,
-                    handletextpad=0,
-                    loc="lower right",
-                    bbox_to_anchor=(1, 1.05),
-                )
 
-        return im
+        return im, ax_ticks
 
     def _plot_fig(
         self, fig: plt.Figure, axs: np.ndarray, rets: list, **kwargs
     ):
-        vals = sum([[im.norm.vmin, im.norm.vmax] for im in rets], [])
+        vals = sum([[im.norm.vmin, im.norm.vmax] for im, _ in rets], [])
 
-        for ax, im in zip(axs, rets):
+        for ax, (im, ax_ticks) in zip(axs, rets):
             im.set_clim(vmin=min(vals), vmax=max(vals))
+
+            divider = make_axes_locatable(ax_ticks)
+            cax = divider.append_axes("right", size="2%", pad=0.05)
+            cax.set_visible(False)
+
             divider = make_axes_locatable(ax)
             cax = divider.append_axes("right", size="2%", pad=0.05)
             cax.set_visible(False)

@@ -8,7 +8,7 @@ import mne.time_frequency as tf
 
 from brainsight import Dataset, Signal
 from brainsight.plotting.base_plotter import BasePlotter
-from brainsight.plotting.utils import nanpow2db
+from brainsight.plotting.utils import nanpow2db, draw_activity
 
 BRAINWAVE_BANDS = {
     "delta": (0.0, 4.0),
@@ -133,7 +133,7 @@ class Periodogram(BasePlotter):
 
         ax.plot(freqs, psds, color="black", lw=0.8, zorder=3)
 
-        ax.set_title(f"Channel: {channel}", ha="left", x=0, fontsize=8)
+        ax.set_title(f"Channel:\n{channel}", ha="left", x=0, fontsize=8, y=1)
 
         ax.set_xlabel("Frequency [Hz]")
 
@@ -147,9 +147,6 @@ class Periodogram(BasePlotter):
             ax.tick_params(labelleft=False)
         else:
             ax.set_ylabel(ylabel)
-
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
 
         return areas
 

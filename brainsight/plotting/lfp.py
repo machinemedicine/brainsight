@@ -6,7 +6,7 @@ from mne.filter import filter_data
 
 from brainsight import Dataset, Signal
 from brainsight.plotting.base_plotter import BasePlotter
-from brainsight.plotting.utils import ms_to_str
+from brainsight.plotting.utils import ms_to_str, draw_activity
 
 
 class LFP(BasePlotter):
@@ -38,50 +38,6 @@ class LFP(BasePlotter):
             )
         return values
 
-    def _draw_activity(self, ax: plt.Axes, roi: Tuple[int, int]):
-        ymin, ymax = ax.get_ylim()
-        xmin, xmax = ax.get_xlim()
-        roi_range = set(range(*roi))
-
-        activities = dict(
-            sorted(self.dataset.ACTIVITY.items(), key=lambda item: item[1][0])
-        )
-        i = 1
-        for name, (a_s, a_e) in activities.items():
-            overlap = set(range(a_s, a_e)).intersection(roi_range)
-            if overlap:
-                ax.axvspan(
-                    xmin=a_s,
-                    xmax=a_e,
-                    zorder=1,
-                    alpha=0.2,
-                    color="purple",
-                    label=f"{i}: {name}",
-                )
-                ax.vlines(
-                    [a_s, a_e],
-                    ymin,
-                    ymax,
-                    zorder=3,
-                    color="purple",
-                    alpha=0.3,
-                    ls=":",
-                )
-                alpha = 1.0 if (i % 2) else 0.8
-                ax.text(
-                    sum(overlap) / len(overlap),
-                    ymax,
-                    s=i,
-                    ha="center",
-                    va="bottom",
-                    alpha=alpha,
-                )
-
-                i += 1
-
-        ax.set_xlim(xmin, xmax)
-        ax.set_ylim(ymin, ymax)
-
     def _plot_ax(
         self,
         ax: plt.Axes,
@@ -97,10 +53,17 @@ class LFP(BasePlotter):
 
         ax.grid(color="black", alpha=0.2)
 
-        ax.spines["top"].set_visible(False)
-        ax.spines["right"].set_visible(False)
-
-        ax.set_title(f"Channel: {channel}", ha="left", x=0, fontsize=8)
+        ax.annotate(
+            f"Channel:\n{channel}",
+            xy=(0, 1),
+            xytext=(3, -3),
+            va="top",
+            xycoords="axes fraction",
+            textcoords="offset points",
+            color="black",
+            fontweight="medium",
+            fontsize=9,
+        )
 
         ax.set_ylabel("LFP [µV]")
         ax.set_xlim(*roi)
@@ -111,7 +74,15 @@ class LFP(BasePlotter):
         ax.set_xlim(*roi)
 
         if show_activity:
-            self._draw_activity(ax=ax, roi=roi)
+            draw_activity(
+                activity_dict=self.dataset.ACTIVITY,
+                ax=ax,
+                roi=roi,
+                ax_i=ax_i,
+                alpha=0.1,
+                color="purple",
+                zorder=1,
+            )
 
         if ax_i:
             ax.set_xlabel("Time [HH:MM:SS]")
@@ -119,15 +90,6 @@ class LFP(BasePlotter):
 
         else:
             ax.tick_params(labelbottom=False)
-            if show_activity:
-                ax.legend(
-                    ncols=4,
-                    fontsize=8,
-                    handlelength=0,
-                    handletextpad=0,
-                    loc="lower right",
-                    bbox_to_anchor=(1, 1.05),
-                )
 
         return None
 

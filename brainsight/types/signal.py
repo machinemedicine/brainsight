@@ -3,6 +3,21 @@ from typing import Tuple, List, Dict, Union, Optional
 import numpy as np
 
 
+class Alias:
+    """Used for creating attribute aliases"""
+
+    def __init__(self, source_name):
+        self.source_name = source_name
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        return getattr(obj, self.source_name)
+
+    def __set__(self, obj, value):
+        setattr(obj, self.source_name, value)
+
+
 class Signal:
     def __init__(
         self,
@@ -33,16 +48,16 @@ class Signal:
         return self._timestamps.copy()
 
     @property
-    def ts(self) -> np.ndarray:
-        return self.timestamps
-
-    @property
     def sampling_rate(self) -> float:
         return self._sampling_rate
 
     @property
     def roi(self) -> Tuple[int, int]:
         return (self.ts.min(), self.ts.max())
+
+    ts = Alias("timestamps")
+    SamplingRate = Alias("sampling_rate")
+    ROI = Alias("roi")
 
     def __len__(self) -> int:
         return len(self._values)

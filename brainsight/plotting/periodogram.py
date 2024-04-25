@@ -8,15 +8,8 @@ import mne.time_frequency as tf
 
 from brainsight import Dataset, Signal
 from brainsight.plotting.base_plotter import BasePlotter
-from brainsight.plotting.utils import nanpow2db, draw_activity
-
-BRAINWAVE_BANDS = {
-    "delta": (0.0, 4.0),
-    "theta": (4.0, 8.0),
-    "alpha": (8.0, 13.0),
-    "beta": (13.0, 32.0),
-    "gamma": (32.0, 120.0),
-}
+from brainsight.plotting.utils import nanpow2db
+import brainsight.plotting.defaults as defaults
 
 
 class Periodogram(BasePlotter):
@@ -31,11 +24,15 @@ class Periodogram(BasePlotter):
         frequency_band: Optional[Tuple[float, float]] = None,
         bandwidth: Optional[float] = None,
         adaptive: bool = False,
+        brainwave_bands: Dict[
+            str, Tuple[float, float]
+        ] = defaults.BRAINWAVE_BANDS,
     ) -> None:
         super().__init__(dataset)
         self.frequency_band = frequency_band
         self.bandwidth = bandwidth
         self.adaptive = adaptive
+        self.brainwave_bands = brainwave_bands
 
     def _get_data(self, signal: Signal, roi: Tuple[int, int]):
         sfreq = signal.sampling_rate
@@ -78,7 +75,9 @@ class Periodogram(BasePlotter):
         xmin, xmax = ax.get_xlim()
 
         band_areas = dict()
-        for i, (name, (start, stop)) in enumerate(BRAINWAVE_BANDS.items()):
+        for i, (name, (start, stop)) in enumerate(
+            self.brainwave_bands.items()
+        ):
             (overlap,) = np.where((start <= freqs) & (freqs < stop))
             color = colormaps["Pastel1"](i)
 
@@ -112,7 +111,17 @@ class Periodogram(BasePlotter):
 
                 band_areas[name] = area
 
-        ax.legend(fontsize=8, loc="upper right")
+        ax.legend(
+            fontsize=8,
+            loc="lower right",
+            ncols=3,
+            bbox_to_anchor=(1, 1.02),
+            borderaxespad=0.0,
+            # loc="upper right",
+            title="Band: Area",
+            alignment="left",
+            title_fontsize=8,
+        )
         ax.set_xlim(xmin, xmax)
         ax.set_ylim(ymin, ymax)
 

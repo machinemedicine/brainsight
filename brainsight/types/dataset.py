@@ -1,4 +1,4 @@
-from typing import Union, Optional
+from typing import Union
 import json
 
 from brainsight.types.signal import Signal
@@ -6,18 +6,35 @@ from brainsight.utils.mappings import VIDEO_VERBOSE_MAPPING
 
 
 class _Dataset:
-    def __init__(
-        self, file_or_dict: Union[str, dict], name: str = "Dataset"
-    ) -> None:
+    r"""Nested Dataset class, ought to be used as a parent class
+    to avoid level-specific properties to be copied for all nested instances.
+
+    Parameters
+    ----------
+    file_or_dict : Union[str, dict]
+        File path to a json file of the dataset downloaded from KELVIN,
+        or the already loaded dataset dictionary.
+    name : str
+        Name of the nested level.
+
+    Raises
+    ------
+    TypeError
+        Provided ``file_or_dict`` is of the wrong type.
+    """
+
+    def __init__(self, file_or_dict: Union[str, dict], name: str) -> None:
         if isinstance(file_or_dict, str):
             dataset = self.__load_json(path=file_or_dict)
         elif isinstance(file_or_dict, dict):
             dataset = file_or_dict
         else:
             raise TypeError(
-                "Dataset input is expected to be a file path (str) or a (dict)."
+                "Dataset input is expected to be a file path (str) or a (dict)"
             )
 
+        # Iterate over the dataset dictionary and create nested instances
+        # of the dataset. Construct a Signal instance if correct keys are found.
         keys = list()
         for k, v in dataset.items():
             key = self.__format_key(k)
@@ -37,11 +54,13 @@ class _Dataset:
 
     @staticmethod
     def __format_key(key: str) -> str:
+        """Formats the dataset keys into valid attribute names."""
         k = VIDEO_VERBOSE_MAPPING.get(key, key)
         return k.split(".").pop()
 
     @staticmethod
     def __load_json(path: str) -> dict:
+        """Loads the dataset json file."""
         if not path.endswith(".json"):
             raise ValueError("The file path is expected to end with `.json`")
         with open(file=path, mode="r") as fp:
@@ -51,21 +70,20 @@ class _Dataset:
     def keys(self) -> set:
         return self._keys
 
-    def values(self):
+    def values(self) -> list:
         return [self[k] for k in self._keys]
 
-    def items(self):
+    def items(self) -> list:
         return [(k, self[k]) for k in self._keys]
 
     def __repr__(self) -> str:
         return self.__str__()
 
     def __str__(self) -> str:
-        sep = "\n  - "
+        sep = "\n- "
         keys = (
             "".join([sep + k for k in self._keys]) if self._keys else "Empty"
         )
-
         return "{}: {}".format(self._name, keys)
 
     def __len__(self) -> int:
@@ -79,9 +97,57 @@ class _Dataset:
 
 
 class Dataset(_Dataset):
-    def __init__(self, file_or_dict: Union[str, dict]) -> None:
-        super().__init__(file_or_dict)
-        self._lfp_shift = 0
+    r"""A class for convenient handling of the dataset downloaded
+    from the KELVIN platform. It unpacks and formats the json file,
+    and integrates with ``brainsight``'s plotting functionality.
+    All levels of the dataset are easily accessible as attributes
+    of the initialised Dataset instance.
+
+
+    Parameters
+    ----------
+    file_or_dict : Union[str, dict]
+        File path to a json file of the dataset downloaded from KELVIN,
+        or the already loaded dataset dictionary.
+
+    Attributes
+    ----------
+    lfp_shift : int
+        Additional time shift [in miliseconds] settable by the user
+        to manually adjust the timestamps of the LFP signals.
+
+    Other Parameters
+    ----------------
+    name : str, optional
+        Name of the dataset, by default "Dataset"
+
+    Examples
+    --------
+
+    >>> dataset = Dataset("path/to/dataset_file.json")
+    >>> dataset
+    Dataset:
+    - LFP
+    - MDS_UPDRS
+    - ACTIVITY
+    - ACCELEROMETER
+    - VIDEO_METADATA
+    - ASSESSMENT_INFO
+    - POSE
+    Additional LFP shift: 0[ms]
+    >>> dataset.LFP
+    LFP:
+    - ZERO_TWO_LEFT
+    - ZERO_TWO_RIGHT
+    >>> dataset.LFP.ZERO_TWO_LEFT
+    Signal(N: 113661, ROI: (0, 454600), SamplingRate: 250.0Hz)
+    """
+
+    def __init__(
+        self, file_or_dict: Union[str, dict], name: str = "Dataset"
+    ) -> None:
+        super().__init__(file_or_dict=file_or_dict, name=name)
+        self.lfp_shift = 0
 
     @property
     def lfp_shift(self) -> int:

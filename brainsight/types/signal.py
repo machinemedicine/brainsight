@@ -2,23 +2,48 @@ from typing import Tuple, List, Dict, Union, Optional
 
 import numpy as np
 
-
-class Alias:
-    """Used for creating attribute aliases"""
-
-    def __init__(self, source_name):
-        self.source_name = source_name
-
-    def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-        return getattr(obj, self.source_name)
-
-    def __set__(self, obj, value):
-        setattr(obj, self.source_name, value)
+from brainsight.types.utils import Alias
 
 
 class Signal:
+    r"""A class for convenient handling of dataset's signals.
+    Each signal object contains values and timestamps of the signal
+    ensuring accurate calculations and plotting.
+
+    Parameters
+    ----------
+    values : List[float]
+        List of signal values.
+    timestamps : List[float]
+        List of timestamps corresponding to the signal values.
+    sampling_rate : Optional[Union[float, int]], optional
+        Sampling rate of the signal [in Hz]. If ``None``, the sampling
+        rate will be inferred as from the median timestamp difference,
+        by default ``None``.
+
+    Attributes
+    ----------
+    values : np.ndarray
+        Numpy array containing signal values.
+    timestamps : np.ndarray
+        Numpy array containing signal timestamps.
+    ts : np.ndarray
+        Alias for ``timestamps``.
+    sampling_rate : float
+        Sampling rate of the signal.
+    SamplingRate : float
+        Alias for ``sampling_rate``.
+    roi : Tuple[int, int]
+        Tuple indicating the first and last timestamp of the signal.
+    ROI : Tuple[int, int]
+        Alias for ``roi``.
+
+    Raises
+    ------
+    ValueError
+        ``values`` and ``timestamps`` are of different length.
+    """
+
     def __init__(
         self,
         values: List[float],
@@ -47,16 +72,18 @@ class Signal:
     def timestamps(self) -> np.ndarray:
         return self._timestamps.copy()
 
+    ts = Alias("timestamps")
+
     @property
     def sampling_rate(self) -> float:
         return self._sampling_rate
+
+    SamplingRate = Alias("sampling_rate")
 
     @property
     def roi(self) -> Tuple[int, int]:
         return (self.ts.min(), self.ts.max())
 
-    ts = Alias("timestamps")
-    SamplingRate = Alias("sampling_rate")
     ROI = Alias("roi")
 
     def __len__(self) -> int:
@@ -77,6 +104,7 @@ class Signal:
             raise TypeError("Singal can be indexed with one of `(slice)`")
 
     def _index_slice(self, index: slice):
+        """Indexes the signal based on timestamps' slice"""
         start_mask = self.timestamps >= index.start
         stop_mask = self.timestamps <= index.stop
         mask = start_mask * stop_mask
@@ -95,7 +123,7 @@ class Signal:
         )
 
     def shift(self, shift: int):
-        """Adds `shift` to the Signal's timestamps. Returns a new Signal instance."""
+        """Adds a `shift` to the Signal's timestamps. Returns a new Signal instance."""
         return self.__class__(
             values=self.values,
             timestamps=self.timestamps + shift,
@@ -103,7 +131,7 @@ class Signal:
         )
 
     def to_dict(self) -> Dict[str, list]:
-        """Convert to a dictionary with serialisable typing."""
+        """Converts the signal to a dictionary with serialisable typing."""
         return {
             "values": self.values.tolist(),
             "timestamps": self.timestamps.tolist(),

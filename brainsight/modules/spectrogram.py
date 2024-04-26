@@ -8,11 +8,11 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import mne.time_frequency as tf
 
 from brainsight import Dataset, Signal
-from brainsight.plotting.base_plotter import BasePlotter
-from brainsight.plotting.utils import ms_to_str, nanpow2db, draw_activity
+from brainsight.modules.base_module import BaseModule
+from brainsight.modules.utils import ms_to_str, nanpow2db, draw_activity
 
 
-class Spectrogram(BasePlotter):
+class Spectrogram(BaseModule):
     _single_ax = False
     _horizontal = False
     _base_wh = (12, 4)
@@ -30,6 +30,10 @@ class Spectrogram(BasePlotter):
         self.window_sec = window_sec
         self.frequency_step = frequency_step
         self.frequency_band = frequency_band
+
+    def get_data(self, channel: str, roi: Tuple[int] | str | None, **kwargs):
+
+        return super().get_data(channel, roi=None, **kwargs)
 
     def _get_data(self, signal: Signal, **kwargs):
         sfreq = signal.sampling_rate
@@ -57,6 +61,7 @@ class Spectrogram(BasePlotter):
 
     def _plot_ax(
         self,
+        data,
         ax: plt.Axes,
         ax_i: int,
         signal: Signal,
@@ -65,7 +70,7 @@ class Spectrogram(BasePlotter):
         show_activity: bool = True,
         **kwargs,
     ):
-        spec, freqs = self.get_data(channel=channel, signal=signal)
+        spec, freqs = data
 
         extent = [*signal.roi, *freqs[[-1, 0]]]
 

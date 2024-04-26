@@ -5,15 +5,14 @@ import matplotlib.pyplot as plt
 from mne.filter import filter_data
 
 from brainsight import Dataset, Signal
-from brainsight.plotting.base_plotter import BasePlotter
-from brainsight.plotting.utils import ms_to_str, draw_activity
+from brainsight.modules.base_module import BaseModule
+from brainsight.modules.utils import ms_to_str, draw_activity
 
 
-class LFP(BasePlotter):
+class LFP(BaseModule):
     _single_ax = False
     _horizontal = False
     _base_wh = (12, 4)
-    _use_cache = True
 
     def __init__(
         self,
@@ -25,6 +24,10 @@ class LFP(BasePlotter):
         super().__init__(dataset)
         self.low_freq = low_freq
         self.high_freq = high_freq
+
+    def get_data(self, channel: str, use_cache: bool = True, **kwargs):
+
+        return super().get_data(channel=channel, use_cache=use_cache, **kwargs)
 
     def _get_data(self, signal: Signal, **kwargs):
         values = signal.values
@@ -114,6 +117,9 @@ class LFP(BasePlotter):
 
         else:
             ax.tick_params(labelbottom=False)
+
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
 
         return ax_acc
 

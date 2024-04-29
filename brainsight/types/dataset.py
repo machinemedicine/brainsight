@@ -123,7 +123,6 @@ class Dataset(_Dataset):
 
     Examples
     --------
-
     >>> dataset = Dataset("path/to/dataset_file.json")
     >>> dataset
     Dataset:
@@ -170,7 +169,7 @@ class Dataset(_Dataset):
             shifted = dict()
             for channel, signal in self.__dict__["LFP"].items():
                 shifted[channel] = signal.shift(self.lfp_shift)
-            return _Dataset(shifted)
+            return _Dataset(shifted, name=self._name)
         else:
             return super().__getattribute__(name)
 

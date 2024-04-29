@@ -74,16 +74,15 @@ class BaseModule(abc.ABC):
                 raise ValueError(
                     f"ROI tuple has to have 2 elements, got ({len(roi)})"
                 )
-            if not len(set(type(r) for r in roi)) == 1:
-                raise ValueError(
-                    "ROI tuple elements have to be of single type"
-                )
-            if not all(isinstance(r, (int, str)) for r in roi):
+            if all(isinstance(r, str) for r in roi):
+                out = [str_to_ms(r) for r in roi]
+            elif all(isinstance(r, int) for r in roi):
+                out = roi
+            else:
                 raise ValueError(
                     "ROI tuple elements have to be both integers (miliseconds)"
                     " or strings in the 'HH:MM:SS' format"
                 )
-            out = roi
         else:
             raise TypeError(
                 "`roi` is expected to be one of: (Tuple[int, int] | Tuple[str, str] | str | None). "

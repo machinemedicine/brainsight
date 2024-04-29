@@ -36,19 +36,27 @@ class Periodogram(BaseModule):
         The specified bands and their corresponding power are highlighted.
         By default the bands are set to:
         ``{"delta": (0.0, 4.0), "theta": (4.0, 8.0), "alpha": (8.0, 13.0), "beta": (13.0, 32.0), "gamma": (32.0, 120.0)}``
-    psd_kwargs : Optional[dict], optional
+    psd_kwargs : dict or None, optional
             Additional parameters passed to the `mne.time_frequency.psd_array_multitaper` function, by default `None`
+
     Methods
     -------
     get_data(channel, roi, **kwargs)
         Compute a multitaper PSD for the selected LFP channel within the specified ROI.
-
+    plot(roi, norm, **kwargs)
+        Plot the periodogram for all LFP channels within the dataset.
 
     Other Parameters
     ----------------
     **kwargs
         Additional parameters passed to the the
         parent `BaseModule` class.
+
+    Examples
+    --------
+    >>> dataset = Dataset("path/to/dataset_file.json")
+    >>> periodogram = Periodogram(dataset)
+    >>> periodogram.plot()
     """
 
     _single_ax = False
@@ -88,7 +96,7 @@ class Periodogram(BaseModule):
         channel : str
             Channel of the LFP for which to calculate the PSD.
         roi : Tuple[int, int] or Tuple[str, str], or str, or None
-            Region of interest for which to calculate the spectrogram.
+            Region of interest for which to calculate the PSD.
             Can be specified as:
             - `Tuple[int, int]`; a tuple of timestamps [miliseconds],
             - `Tuple[str, str]`; a tuple of time strings in the "HH:MM:SS" format,
@@ -261,7 +269,7 @@ class Periodogram(BaseModule):
         Parameters
         ----------
         roi : Tuple[int, int] or Tuple[str, str], or str, or None
-            Region of interest for which to calculate the spectrogram.
+            Region of interest for which to plot the PSD.
             Can be specified as:
             - `Tuple[int, int]`; a tuple of timestamps [miliseconds],
             - `Tuple[str, str]`; a tuple of time strings in the "HH:MM:SS" format,
@@ -285,7 +293,7 @@ class Periodogram(BaseModule):
         signal: Signal,
         channel: str,
         roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]],
-        norm: str = "density",
+        norm: str,
         **kwargs,
     ):
         psds, freqs = self.get_data(channel=channel, roi=roi)

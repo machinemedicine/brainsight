@@ -29,19 +29,27 @@ class Spectrogram(BaseModule):
     frequency_band : Tuple[float, float] or None, optional
         Interval of frequencies for which to compute the Spectrogram.
         If `None`, the band is set to (`frequency_step`, Nyquist), by default `None`.
-    tfr_kwargs : Optional[dict], optional
+    tfr_kwargs : dict or None, optional
             Additional parameters passed to the `mne.time_frequency.tfr_array_multitaper` function, by default `None`
+
     Methods
     -------
     get_data(channel, roi, **kwargs)
         Compute a multitaper spectrogram for the selected LFP channel within the specified ROI.
-
+    plot(roi, show_activity, **kwargs)
+        Plot the spectrogram for all LFP channels within the dataset.
 
     Other Parameters
     ----------------
     **kwargs
         Additional parameters passed to the the
         parent `BaseModule` class.
+
+    Examples
+    --------
+    >>> dataset = Dataset("path/to/dataset_file.json")
+    >>> spectrogram = Spectrogram(dataset, window_sec=5.0)
+    >>> spectrogram.plot()
     """
 
     _single_ax = False
@@ -68,7 +76,7 @@ class Spectrogram(BaseModule):
         channel: str,
         roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]],
         **kwargs,
-    ):
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Compute a multitaper spectrogram for the selected LFP channel
         within the specified ROI.
 
@@ -121,7 +129,7 @@ class Spectrogram(BaseModule):
         frequency_step: float,
         frequency_band: Optional[Tuple[float, float]],
         **kwargs,
-    ):
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Compute a multitaper spectrogram for the given Signal
         within the specified ROI.
 
@@ -181,13 +189,13 @@ class Spectrogram(BaseModule):
         roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]] = None,
         show_activity: bool = True,
         **kwargs,
-    ):
+    ) -> plt.Figure:
         """Plot the spectrogram for all LFP channels within the dataset.
 
         Parameters
         ----------
         roi : Tuple[int, int] or Tuple[str, str], or str, or None
-            Region of interest for which to calculate the spectrogram.
+            Region of interest for which to plot the spectrogram.
             Can be specified as:
             - `Tuple[int, int]`; a tuple of timestamps [miliseconds],
             - `Tuple[str, str]`; a tuple of time strings in the "HH:MM:SS" format,
@@ -210,7 +218,7 @@ class Spectrogram(BaseModule):
         channel: str,
         signal: Signal,
         roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]],
-        show_activity: bool = True,
+        show_activity: bool,
         **kwargs,
     ):
         # Compute the spectrogram

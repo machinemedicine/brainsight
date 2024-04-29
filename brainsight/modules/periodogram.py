@@ -23,11 +23,11 @@ class Periodogram(BaseModule):
         data modalities.
     frequency_band : Tuple[float, float] or None, optional
         Interval of frequencies for which to compute the PSD.
-        If `None`, the band is set to (0, Nyquist), by default None.
+        If `None`, the band is set to (0, Nyquist), by default `None`.
     bandwidth : float or None, optional
         Frequency bandwidth of the multi-taper window function in Hz.
         For a given frequency, frequencies at ± bandwidth / 2 are smoothed together.
-        If `None`, the value is set to `8 * (signal.samplig_rate / len(signal))`, by default None
+        If `None`, the value is set to `8 * (signal.samplig_rate / len(signal))`, by default `None`
     adaptive : bool, optional
         Use adaptive weights to combine the tapered spectra into PSD
         (might be slower), by default False.
@@ -36,7 +36,19 @@ class Periodogram(BaseModule):
         The specified bands and their corresponding power are highlighted.
         By default the bands are set to:
         ``{"delta": (0.0, 4.0), "theta": (4.0, 8.0), "alpha": (8.0, 13.0), "beta": (13.0, 32.0), "gamma": (32.0, 120.0)}``
+    psd_kwargs : Optional[dict], optional
+            Additional parameters passed to the `mne.time_frequency.psd_array_multitaper` function, by default `None`
+    Methods
+    -------
+    get_data(channel, roi, **kwargs)
+        Compute a multitaper PSD for the selected LFP channel within the specified ROI.
 
+
+    Other Parameters
+    ----------------
+    **kwargs
+        Additional parameters passed to the the
+        parent `BaseModule` class.
     """
 
     _single_ax = False
@@ -52,18 +64,20 @@ class Periodogram(BaseModule):
         brainwave_bands: Dict[
             str, Tuple[float, float]
         ] = defaults.BRAINWAVE_BANDS,
+        psd_kwargs: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        super().__init__(dataset)
+        super().__init__(dataset, **kwargs)
         self.frequency_band = frequency_band
         self.bandwidth = bandwidth
         self.adaptive = adaptive
         self.brainwave_bands = brainwave_bands
+        self.psd_kwargs = psd_kwargs or dict()
 
     def get_data(
         self,
         channel: str,
-        roi: Optional[Union[Tuple[int, int], str]],
+        roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]],
         **kwargs,
     ):
         """Compute a multitaper PSD for the selected LFP channel
@@ -73,11 +87,13 @@ class Periodogram(BaseModule):
         ----------
         channel : str
             Channel of the LFP for which to calculate the PSD.
-        roi : Tuple[int, int] or str, or None
-            Region of interest for which to calculate the PSD.
+        roi : Tuple[int, int] or Tuple[str, str], or str, or None
+            Region of interest for which to calculate the spectrogram.
             Can be specified as:
-
-
+            - `Tuple[int, int]`; a tuple of timestamps [miliseconds],
+            - `Tuple[str, str]`; a tuple of time strings in the "HH:MM:SS" format,
+            - `str`; name of the detected activity class,
+            - `None`; the entire signal ROI is used.
 
         Other Parameters
         ----------------
@@ -97,13 +113,14 @@ class Periodogram(BaseModule):
             frequency_band=self.frequency_band,
             bandwidth=self.bandwidth,
             adaptive=self.adaptive,
+            **self.psd_kwargs,
             **kwargs,
         )
 
     @staticmethod
     def _get_data(
         signal: Signal,
-        roi: Tuple[int, int],
+        roi_ms: Tuple[int, int],
         frequency_band: Tuple[float, float],
         bandwidth: Optional[float],
         adaptive: bool,
@@ -116,7 +133,7 @@ class Periodogram(BaseModule):
         ----------
         signal : Signal
             Input signal for which to compute the PSD.
-        roi : Tuple[int, int]
+        roi_ms : Tuple[int, int]
             Region of interest [in miliseconds] for which
             to compute the PSD.
         frequency_band : Tuple[float, float]
@@ -142,9 +159,9 @@ class Periodogram(BaseModule):
             Estimated power and corresponding frequency arrays
         """
         sfreq = signal.sampling_rate
-        fmin, fmax = frequency_band
+        fmin, fmax = frequency_band or (0, sfreq / 2)
 
-        data = signal[slice(*roi)].values
+        data = signal[slice(*roi_ms)].values
         psds, freqs = tf.psd_array_multitaper(
             x=data,
             sfreq=sfreq,
@@ -235,7 +252,7 @@ class Periodogram(BaseModule):
 
     def plot(
         self,
-        roi: Optional[Union[Tuple[int, int], str]] = None,
+        roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]] = None,
         norm: str = "density",
         **kwargs,
     ) -> plt.Figure:
@@ -244,9 +261,12 @@ class Periodogram(BaseModule):
         Parameters
         ----------
         roi : Tuple[int, int] or Tuple[str, str], or str, or None
-            Region of interest for the PSD calculation. Can be one of:
-            tuple of integers (miliseconds); tuple of strings in the "HH:MM:SS" format;
-            name of the detected activity, or `None`. If `None`, the LFP signal's ROI is used.
+            Region of interest for which to calculate the spectrogram.
+            Can be specified as:
+            - `Tuple[int, int]`; a tuple of timestamps [miliseconds],
+            - `Tuple[str, str]`; a tuple of time strings in the "HH:MM:SS" format,
+            - `str`; name of the detected activity class,
+            - `None`; the entire signal ROI is used.
         norm : {"density", "power", "dB"}, optional
             Mode of the plotting norm. If "density", the plot is normalised
             per channel so that the area sums up to 1.0
@@ -264,11 +284,11 @@ class Periodogram(BaseModule):
         ax_i: int,
         signal: Signal,
         channel: str,
-        roi: Tuple[int, int],
+        roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]],
         norm: str = "density",
         **kwargs,
     ):
-        psds, freqs = self.get_data(channel=channel, signal=signal, roi=roi)
+        psds, freqs = self.get_data(channel=channel, roi=roi)
 
         psds, ylabel = self._format_psds(psds=psds, norm=norm)
 

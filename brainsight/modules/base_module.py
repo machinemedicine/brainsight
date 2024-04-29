@@ -116,7 +116,7 @@ class BaseModule(abc.ABC):
 
     @staticmethod
     @abc.abstractmethod
-    def _get_data(signal: Signal, **kwargs):
+    def _get_data(signal: Signal, roi_ms: Tuple[int, int], **kwargs):
         """Static function preparing Signal data for plotting."""
 
     @abc.abstractmethod
@@ -128,11 +128,14 @@ class BaseModule(abc.ABC):
         fig, axs = self._setup_figure()
 
         rets = []
-        for i, (ax, channel) in enumerate(zip(self.dataset.LFP, axs)):
+        for i, (ax, (channel, signal)) in enumerate(
+            zip(axs, self.dataset.LFP.items())
+        ):
             ret = self._plot_ax(
                 ax=ax,
                 ax_i=i,
                 channel=channel,
+                signal=signal,
                 roi=roi,
                 **kwargs,
             )
@@ -148,8 +151,8 @@ class BaseModule(abc.ABC):
     def _plot_ax(
         self,
         ax: plt.Axes,
-        signal: Signal,
         channel: str,
+        signal: Signal,
         roi=Tuple[int, int],
         **kwargs,
     ):

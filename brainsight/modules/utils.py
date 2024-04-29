@@ -37,15 +37,14 @@ def legend_no_handles(ax: plt.Axes, **kwargs) -> matplotlib.legend.Legend:
 def draw_activity(
     activity_dict: Dict[str, Tuple[int, int]],
     ax: plt.Axes,
-    roi: Tuple[int, int],
+    roi_ms: Tuple[int, int],
     ax_i: int,
     **axvspan_kwargs,
 ) -> plt.Axes:
     """Draw activities found fithin the specified ROI on a new twin axis."""
     ax_ticks = ax.twiny()
-    ymin, ymax = ax.get_ylim()
     xmin, xmax = ax.get_xlim()
-    roi_range = set(range(*roi))
+    roi_range = set(range(*roi_ms))
 
     activities = dict(
         sorted(activity_dict.items(), key=lambda item: item[1][0])

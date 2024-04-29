@@ -103,18 +103,23 @@ class Signal:
         else:
             raise TypeError("Singal can be indexed with one of `(slice)`")
 
-    def _index_slice(self, index: slice):
-        """Indexes the signal based on timestamps' slice"""
-        start_mask = self.timestamps >= index.start
-        stop_mask = self.timestamps <= index.stop
+    def _mask_slice(self, s: slice) -> np.ndarray:
+        """Return a binary mask indicating where the signal overlaps the time slice."""
+        start_mask = self.timestamps >= s.start
+        stop_mask = self.timestamps <= s.stop
         mask = start_mask * stop_mask
 
         if not mask.sum():
             raise IndexError(
                 "Indexed region ({}) does not overlap the Signal's ROI ({})".format(
-                    (index.start, index.stop), self.roi
+                    (s.start, s.stop), self.roi
                 )
             )
+        return mask
+
+    def _index_slice(self, index: slice):
+        """Indexes the signal based on timestamps' slice, returns a new Signal"""
+        mask = self._mask_slice(s=index)
 
         return self.__class__(
             values=self.values[mask],

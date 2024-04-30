@@ -6,7 +6,7 @@ from mne.filter import filter_data
 
 from brainsight import Dataset, Signal
 from brainsight.modules.base_module import BaseModule
-from brainsight.modules.utils import ms_to_str, draw_activity
+from brainsight.modules.utils import ms_to_str, _draw_activity
 
 
 class LFP(BaseModule):
@@ -275,7 +275,7 @@ class LFP(BaseModule):
         ax.set_xlim(*processed.roi)
 
         if show_activity:
-            draw_activity(
+            _draw_activity(
                 activity_dict=self.dataset.ACTIVITY,
                 ax=ax,
                 roi_ms=processed.roi,

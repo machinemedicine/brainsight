@@ -2,7 +2,7 @@ from typing import Tuple, List, Dict, Union, Optional
 
 import numpy as np
 
-from brainsight.types.utils import Alias
+from brainsight.types.utils import _Alias
 
 
 class Signal:
@@ -16,7 +16,7 @@ class Signal:
         List of signal values.
     timestamps : List[float]
         List of timestamps corresponding to the signal values.
-    sampling_rate : Optional[Union[float, int]], optional
+    sampling_rate : float or int, or None
         Sampling rate of the signal [in Hz]. If ``None``, the sampling
         rate will be inferred as from the median timestamp difference,
         by default ``None``.
@@ -38,10 +38,30 @@ class Signal:
     ROI : Tuple[int, int]
         Alias for ``roi``.
 
+    Methods
+    -------
+    shift(shift_ms)
+        Temporally shifts the Signal's timestamps.
+        Returns a new Signal instance.
+    to_dict()
+        Converts the signal to a dictionary with serialisable typing.
+
     Raises
     ------
     ValueError
         ``values`` and ``timestamps`` are of different length.
+
+    Examples
+    --------
+    >>> signal = Signal(values=[0.2, 0.3, 0.1], timestamps=[1, 2, 3])
+    >>> signal
+    Signal(N: 3, ROI: (0, 2), SamplingRate: 1000.0Hz)
+    >>> signal.values
+    array([0.2, 0.3, 0.1])
+    >>> signal.timestamps
+    array([0, 1, 2])
+    >>> signal.roi
+    (0, 2)
     """
 
     def __init__(
@@ -72,19 +92,19 @@ class Signal:
     def timestamps(self) -> np.ndarray:
         return self._timestamps.copy()
 
-    ts = Alias("timestamps")
+    ts = _Alias("timestamps")
 
     @property
     def sampling_rate(self) -> float:
         return self._sampling_rate
 
-    SamplingRate = Alias("sampling_rate")
+    SamplingRate = _Alias("sampling_rate")
 
     @property
     def roi(self) -> Tuple[int, int]:
         return (self.ts.min(), self.ts.max())
 
-    ROI = Alias("roi")
+    ROI = _Alias("roi")
 
     def __len__(self) -> int:
         return len(self._values)
@@ -127,11 +147,24 @@ class Signal:
             sampling_rate=self.sampling_rate,
         )
 
-    def shift(self, shift: int):
-        """Adds a `shift` to the Signal's timestamps. Returns a new Signal instance."""
+    def shift(self, shift_ms: int):
+        """Temporaly shifts the Signal by adding `shift_ms` to the Signal's timestamps.
+        Returns a new Signal instance.
+
+
+        Examples
+        --------
+        >>> signal = Signal(values=[0.2, 0.3, 0.1], timestamps=[1, 2, 3])
+        >>> signal
+        Signal(N: 3, ROI: (0, 2), SamplingRate: 1000.0Hz)
+        >>> signal.shift(100)
+        Signal(N: 3, ROI: (100, 102), SamplingRate: 1000.0Hz)
+        >>> signal.shift(-5)
+        Signal(N: 3, ROI: (-5, -3), SamplingRate: 1000.0Hz)
+        """
         return self.__class__(
             values=self.values,
-            timestamps=self.timestamps + shift,
+            timestamps=self.timestamps + shift_ms,
             sampling_rate=self.sampling_rate,
         )
 

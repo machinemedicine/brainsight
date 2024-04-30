@@ -2,7 +2,7 @@ from typing import Union
 import json
 
 from brainsight.types.signal import Signal
-from brainsight.utils.mappings import VIDEO_VERBOSE_MAPPING
+from brainsight.types.utils import VIDEO_VERBOSE_MAPPING
 
 
 class _Dataset:
@@ -97,7 +97,7 @@ class _Dataset:
 
 
 class Dataset(_Dataset):
-    r"""A class for convenient handling of the dataset downloaded
+    r"""A class for convenient handling of the dataset obtained
     from the KELVIN platform. It unpacks and formats the json file,
     and integrates with ``brainsight``'s plotting functionality.
     All levels of the dataset are easily accessible as attributes
@@ -150,7 +150,38 @@ class Dataset(_Dataset):
 
     @property
     def lfp_shift(self) -> int:
-        """Additional shift of the LFP signals."""
+        """Additional time shift of the LFP signals. Assign it an integer value
+        [miliseconds] to shift all LFP Signals returned by the Dataset by that value.
+
+        Examples
+        --------
+        >>> dataset = Dataset("path/to/dataset_file.json")
+        >>> dataset
+        Dataset:
+        - LFP
+        - MDS_UPDRS
+        - ACTIVITY
+        - ACCELEROMETER
+        - VIDEO_METADATA
+        - ASSESSMENT_INFO
+        - POSE
+        Additional LFP shift: 0[ms]
+        >>> dataset.LFP.ZERO_TWO_LEFT
+        Signal(N: 113661, ROI: (0, 454600), SamplingRate: 250.0Hz)
+        >>> dataset.lfp_shift = 800
+        >>> dataset
+        Dataset:
+        - LFP
+        - MDS_UPDRS
+        - ACTIVITY
+        - ACCELEROMETER
+        - VIDEO_METADATA
+        - ASSESSMENT_INFO
+        - POSE
+        Additional LFP shift: 800[ms]
+        >>> dataset.LFP.ZERO_TWO_LEFT
+        Signal(N: 113661, ROI: (800, 455400), SamplingRate: 250.0Hz)
+        """
         return self._lfp_shift
 
     @lfp_shift.setter

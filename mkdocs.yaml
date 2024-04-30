@@ -1,0 +1,63 @@
+site_name: "BrainSight"
+site_url: http://127.0.0.1:8000/brainsight  # Set to empty string false if deploying to as files
+site_description: "BrainSight"
+site_author: "Machine Medicine Team"
+copyright: "2024 MMT"
+use_directory_urls: true  # Set to false if deploying to as files
+repo_name: brainsight
+repo_url: https://bitbucket.org/machinemedicine/brainsight
+edit_uri: blob/master/docs/
+
+theme:
+  name: material
+  locale: en
+  logo: https://i.ibb.co/PFtmvNt/logo.png
+  favicon: https://i.ibb.co/PFtmvNt/logo.png
+  icon:
+    repo: fontawesome/brands/bitbucket
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.sections
+    - navigation.path
+
+nav:
+  - Home:
+    - "Welcome": index.md
+    - "Install": install.md
+    - "Demo": demo.md
+  - API Reference: reference/
+
+watch:
+  - brainsight/
+
+plugins:
+  - search
+  - gen-files:
+      scripts:
+        - scripts/gen_doc_stubs.py
+  - mkdocstrings:
+      default_handler: python
+      handlers:
+        python:
+          options:
+            # https://mkdocstrings.github.io/python/usage/
+            docstring_style: numpy
+            show_signature_annotations: True
+            show_source: False
+            # show_if_no_docstring: True
+            merge_init_into_class: True
+            show_symbol_type_toc: True
+            show_symbol_type_heading: True
+        
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - section-index
+
+exclude_docs:
+  /reference/scripts/*
+
+markdown_extensions:
+  - pymdownx.highlight
+  - toc:
+      permalink: "#"

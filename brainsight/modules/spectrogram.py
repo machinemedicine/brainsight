@@ -9,7 +9,7 @@ import mne.time_frequency as tf
 
 from brainsight import Dataset, Signal
 from brainsight.modules.base_module import BaseModule
-from brainsight.modules.utils import ms_to_str, nanpow2db, draw_activity
+from brainsight.modules.utils import ms_to_str, nanpow2db, _draw_activity
 
 
 class Spectrogram(BaseModule):
@@ -30,7 +30,7 @@ class Spectrogram(BaseModule):
         Interval of frequencies for which to compute the Spectrogram.
         If `None`, the band is set to (`frequency_step`, Nyquist), by default `None`.
     tfr_kwargs : dict or None, optional
-            Additional parameters passed to the `mne.time_frequency.tfr_array_multitaper` function, by default `None`
+        Additional parameters passed to the `mne.time_frequency.tfr_array_multitaper` function, by default `None`
 
     Methods
     -------
@@ -48,7 +48,7 @@ class Spectrogram(BaseModule):
     Examples
     --------
     >>> dataset = Dataset("path/to/dataset_file.json")
-    >>> spectrogram = Spectrogram(dataset, window_sec=5.0)
+    >>> spectrogram = Spectrogram(dataset)
     >>> spectrogram.plot()
     """
 
@@ -253,7 +253,7 @@ class Spectrogram(BaseModule):
 
         # Draw activity regions
         if show_activity:
-            ax_ticks = draw_activity(
+            ax_ticks = _draw_activity(
                 activity_dict=self.dataset.ACTIVITY,
                 ax=ax,
                 roi_ms=roi_ms,
@@ -293,5 +293,5 @@ class Spectrogram(BaseModule):
         fig.colorbar(
             im,
             cax=cax,
-            label="PSD [$\mathrm{dB}\ $$\mathrm{{µV²/Hz}}$]",
+            label="PSD [dB µV²/Hz]",
         )

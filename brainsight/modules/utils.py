@@ -1,3 +1,6 @@
+r"""Contains utility functions for the plotting modules. 
+"""
+
 from typing import Tuple, Dict
 from datetime import datetime, timedelta
 
@@ -19,13 +22,13 @@ def ms_to_str(ms: int) -> str:
     return str(timedelta(milliseconds=int(ms))).split(".")[0]
 
 
-def nanpow2db(y):
-    """Convert Power to dB."""
+def nanpow2db(y: np.ndarray) -> np.ndarray:
+    """Convert Power array to dB."""
     y[y == 0] = np.nan
     return 10 * np.log10(y)
 
 
-def legend_no_handles(ax: plt.Axes, **kwargs) -> matplotlib.legend.Legend:
+def _legend_no_handles(ax: plt.Axes, **kwargs) -> matplotlib.legend.Legend:
     "Draw a legend on the Ax with no handles, jsut labels."
     legend = ax.legend(handlelength=0, handletextpad=0, **kwargs)
     for item in legend.legendHandles:
@@ -34,7 +37,7 @@ def legend_no_handles(ax: plt.Axes, **kwargs) -> matplotlib.legend.Legend:
     return legend
 
 
-def draw_activity(
+def _draw_activity(
     activity_dict: Dict[str, Tuple[int, int]],
     ax: plt.Axes,
     roi_ms: Tuple[int, int],
@@ -71,7 +74,7 @@ def draw_activity(
         if ax_i:
             ax_ticks.tick_params(top=False, labeltop=False)
         else:
-            legend_no_handles(
+            _legend_no_handles(
                 ax=ax,
                 ncols=4,
                 fontsize=8,

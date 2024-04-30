@@ -25,7 +25,7 @@ nav:
   - Home:
     - "Welcome": index.md
     - "Install": install.md
-    - "Demo": demo.md
+    - "Getting started": demo.md
   - API Reference: reference/
 
 watch:

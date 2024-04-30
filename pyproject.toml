@@ -6,7 +6,7 @@ authors = ["MMT Analytics <analytics@machinemedicine.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 numpy = "~1.26.1"
 scipy = "~1.11.3"
 PyYAML = "~6.0"

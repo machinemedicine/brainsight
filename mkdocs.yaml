@@ -11,15 +11,18 @@ edit_uri: blob/master/docs/
 theme:
   name: material
   locale: en
-  logo: https://i.ibb.co/PFtmvNt/logo.png
-  favicon: https://i.ibb.co/PFtmvNt/logo.png
+  logo: https://i.ibb.co/NmYzF03/MMT-Inverted.png
+  favicon: https://i.ibb.co/NmYzF03/MMT-Inverted.png
   icon:
     repo: fontawesome/brands/github
   features:
     - navigation.instant
     - navigation.tabs
     - navigation.sections
-    - navigation.path
+  palette:
+    scheme: mmt
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home:
@@ -53,9 +56,6 @@ plugins:
   - literate-nav:
       nav_file: SUMMARY.md
   - section-index
-
-exclude_docs:
-  /reference/scripts/*
 
 markdown_extensions:
   - pymdownx.highlight

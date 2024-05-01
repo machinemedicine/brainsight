@@ -11,6 +11,9 @@ src = root
 
 for path in sorted(src.rglob("*.py")):
     module_path = path.relative_to(src).with_suffix("")
+    # Skip this very file and exclude from the docs
+    if str(module_path).startswith("scripts/"):
+        continue
     doc_path = path.relative_to(src).with_suffix(".md")
     # Create a folder for all documentation files to be generated in
     full_doc_path = Path("reference", doc_path)

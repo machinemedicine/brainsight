@@ -2,10 +2,10 @@ r"""**BrainSight** accommodates easy and intuitive analysis of local field poten
 data captured by the Percept PC device and saved as part of a multimodal data exported through
 the KELVIN platform.
 
-[`brainsight.types`](../types/__init__/) contain classes designed to simplify the handling of
+[`brainsight.types`](types/__init__.md) contain classes designed to simplify the handling of
 multimodal datasets and timestamp-synchronised signals.
 
-[`brainsight.modules`](../modules/__init__/) allow for processing and plotting of the data using
+[`brainsight.modules`](modules/__init__.md) allow for processing and plotting of the data using
 the custom typing, ensuring that the analysis is straightforward and robust.
 
 The most common `modules` and `types` can be directly accessed from `brainsight`.

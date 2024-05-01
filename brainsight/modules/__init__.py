@@ -2,9 +2,9 @@ r"""Modules for analysis and plotting of the multimodal Dataset
 
 Currently available modules include:
 
-- [`LFP`](../lfp/)
-- [`Periodogram`](../periodogram/) 
-- [`Spectrogram`](../spectrogram/) 
+- [`LFP`](lfp.md)
+- [`Periodogram`](periodogram.md) 
+- [`Spectrogram`](spectrogram.md) 
 
 """
 

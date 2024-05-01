@@ -16,11 +16,11 @@ Full description of the dataset creation can be found [here]().
 
 ## Try it out ##
 
-Find out how to [`install`](install/) this cool package.
+Find out how to [`install`](install.md) this cool package.
 
-Then learn how to use it by checking out the [`demo`](demo/) notebook.
+Then learn how to use it by checking out the [`demo`](demo.md) notebook.
 
-For more details see the [`docs`](reference/brainsight/__init__/)
+For more details see the [`docs`](reference/brainsight/__init__.md)
 
 ## Who do I talk to? ##
 

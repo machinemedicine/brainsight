@@ -2,8 +2,8 @@ r"""Data types used to easily navigate the multimodal dataset.
 
 Main data types include:
 
-- [`Dataset`](../dataset/)
-- [`Signal`](../signal/) 
+- [`Dataset`](dataset.md)
+- [`Signal`](signal.md) 
 
 """
 

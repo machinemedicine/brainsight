@@ -39,6 +39,11 @@ class Periodogram(BaseModule):
     psd_kwargs : dict or None, optional
         Additional parameters passed to the `mne.time_frequency.psd_array_multitaper` function, by default `None`
 
+    Notes
+    -----
+    The periodogram calculation is performed using the `mne.time_frequency.psd_array_multitaper` function.
+    For more information about the algorithm visit: [MNE - psd_array_multitaper](<https://mne.tools/stable/generated/mne.time_frequency.psd_array_multitaper.html>)
+
     Methods
     -------
     get_data(channel, roi, **kwargs)

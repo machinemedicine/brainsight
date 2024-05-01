@@ -32,6 +32,11 @@ class Spectrogram(BaseModule):
     tfr_kwargs : dict or None, optional
         Additional parameters passed to the `mne.time_frequency.tfr_array_multitaper` function, by default `None`
 
+    Notes
+    -----
+    The spectrogram calculation is performed using the `mne.time_frequency.tfr_array_multitaper` function.
+    For more information about the algorithm visit: [MNE - tfr_array_multitaper](<https://mne.tools/stable/generated/mne.time_frequency.tfr_array_multitaper.html>)
+
     Methods
     -------
     get_data(channel, roi, **kwargs)

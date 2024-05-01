@@ -37,7 +37,7 @@ class LFP(BaseModule):
         * ``low_freq is not None and high_freq is None``: high-pass filter
         * ``low_freq is None and high_freq is not None``: low-pass filter
 
-    For more, see: https://mne.tools/stable/generated/mne.filter.filter_data.html
+    For more details, see: [MNE - filter_data](<https://mne.tools/stable/generated/mne.filter.filter_data.html>)
 
     Methods
     -------

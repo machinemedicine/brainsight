@@ -8,6 +8,7 @@ multimodal datasets and timestamp-synchronised signals.
 [`brainsight.modules`](../modules/__init__/) allow for processing and plotting of the data using
 the custom typing, ensuring that the analysis is straightforward and robust.
 
+The most common `modules` and `types` can be directly accessed from `brainsight`.
 
 Examples
 --------

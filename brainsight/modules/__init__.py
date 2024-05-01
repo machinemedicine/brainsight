@@ -1,4 +1,11 @@
 r"""Modules for analysis and plotting of the multimodal Dataset
+
+Currently available modules include:
+
+- [`LFP`](../lfp/)
+- [`Periodogram`](../periodogram/) 
+- [`Spectrogram`](../spectrogram/) 
+
 """
 
 from brainsight.modules.base_module import BaseModule

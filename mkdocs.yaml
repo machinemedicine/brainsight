@@ -5,7 +5,7 @@ site_author: "Machine Medicine Team"
 copyright: "2024 MMT"
 use_directory_urls: true  # Set to false if deploying to as files
 repo_name: brainsight
-repo_url: https://bitbucket.org/machinemedicine/brainsight
+repo_url: https://github.com/machinemedicine/brainsight
 edit_uri: blob/master/docs/
 
 theme:
@@ -14,7 +14,7 @@ theme:
   logo: https://i.ibb.co/PFtmvNt/logo.png
   favicon: https://i.ibb.co/PFtmvNt/logo.png
   icon:
-    repo: fontawesome/brands/bitbucket
+    repo: fontawesome/brands/github
   features:
     - navigation.instant
     - navigation.tabs

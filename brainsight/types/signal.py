@@ -55,13 +55,13 @@ class Signal:
     --------
     >>> signal = Signal(values=[0.2, 0.3, 0.1], timestamps=[1, 2, 3])
     >>> signal
-    Signal(N: 3, ROI: (0, 2), SamplingRate: 1000.0Hz)
+    Signal(N: 3, ROI: (1, 3), SamplingRate: 1000.0Hz)
     >>> signal.values
     array([0.2, 0.3, 0.1])
     >>> signal.timestamps
-    array([0, 1, 2])
+    array([1, 2, 3])
     >>> signal.roi
-    (0, 2)
+    (1, 3)
     """
 
     def __init__(
@@ -156,11 +156,11 @@ class Signal:
         --------
         >>> signal = Signal(values=[0.2, 0.3, 0.1], timestamps=[1, 2, 3])
         >>> signal
-        Signal(N: 3, ROI: (0, 2), SamplingRate: 1000.0Hz)
+        Signal(N: 3, ROI: (1, 3), SamplingRate: 1000.0Hz)
         >>> signal.shift(100)
-        Signal(N: 3, ROI: (100, 102), SamplingRate: 1000.0Hz)
+        Signal(N: 3, ROI: (101, 103), SamplingRate: 1000.0Hz)
         >>> signal.shift(-5)
-        Signal(N: 3, ROI: (-5, -3), SamplingRate: 1000.0Hz)
+        Signal(N: 3, ROI: (-4, -2), SamplingRate: 1000.0Hz)
         """
         return self.__class__(
             values=self.values,

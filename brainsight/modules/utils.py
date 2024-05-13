@@ -44,7 +44,7 @@ def _draw_activity(
     ax_i: int,
     **axvspan_kwargs,
 ) -> plt.Axes:
-    """Draw activities found fithin the specified ROI on a new twin axis."""
+    """Draw activities found within the specified ROI on a new twin axis."""
     ax_ticks = ax.twiny()
     xmin, xmax = ax.get_xlim()
     roi_range = set(range(*roi_ms))

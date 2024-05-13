@@ -37,7 +37,12 @@ class Periodogram(BaseModule):
         By default the bands are set to:
         ``{"delta": (0.0, 4.0), "theta": (4.0, 8.0), "alpha": (8.0, 13.0), "beta": (13.0, 32.0), "gamma": (32.0, 120.0)}``
     psd_kwargs : dict or None, optional
-            Additional parameters passed to the `mne.time_frequency.psd_array_multitaper` function, by default `None`
+        Additional parameters passed to the `mne.time_frequency.psd_array_multitaper` function, by default `None`
+
+    Notes
+    -----
+    The periodogram calculation is performed using the `mne.time_frequency.psd_array_multitaper` function.
+    For more information about the algorithm visit: [MNE - psd_array_multitaper](<https://mne.tools/stable/generated/mne.time_frequency.psd_array_multitaper.html>)
 
     Methods
     -------
@@ -113,6 +118,30 @@ class Periodogram(BaseModule):
         -------
         Tuple[np.ndarray, np.ndarray]
             Estimated power and corresponding frequencies arrays
+
+        Examples
+        --------
+        >>> dataset = Dataset("path/to/dataset_file.json")
+        >>> dataset.LFP
+        Dataset:
+        - ZERO_TWO_RIGHT
+        - ZERO_TWO_LEFT
+        >>> dataset.ACTIVITY
+        ACTIVITY:
+        - LEG_AGILITY_RIGHT
+        - FINGER_TAPPING_LEFT
+        - GAIT_TOWARDS_CAMERA
+        - HAND_MOVEMENTS_RIGHT
+        - ARISING_FROM_CHAIR
+        - FINGER_TAPPING_RIGHT
+        - GAIT_FROM_CAMERA
+        - TOE_TAPPING_LEFT
+        - TOE_TAPPING_RIGHT
+        - POSTURAL_TREMOR_OF_HANDS_LEFT
+        - LEG_AGILITY_LEFT
+        - HAND_MOVEMENTS_LEFT
+        >>> periodogram = Periodogram(dataset, frequency_band=(5.0, 50.0))
+        >>> psds, freqs = periodogram.get_data(channel="ZERO_TWO_RIGHT", roi="ARISING_FROM_CHAIR")
         """
 
         return super().get_data(
@@ -188,12 +217,12 @@ class Periodogram(BaseModule):
         "Format the PSDs and create a correspondig label"
         if norm == "dB":
             psds = nanpow2db(psds)
-            ylabel = "PSD [$\mathrm{dB}\ $$\mathrm{{µV²/Hz}}$]"
+            ylabel = "PSD [dB µV²/Hz]"
         elif norm == "density":
             psds /= psds.sum()
             ylabel = "PSD"
         elif norm == "power":
-            ylabel = "PSD [$\mathrm{{µV²/Hz}}$]"
+            ylabel = "PSD [µV²/Hz]"
         else:
             raise ValueError()
         return psds, ylabel
@@ -242,6 +271,7 @@ class Periodogram(BaseModule):
 
                 band_areas[name] = area
 
+        ax.axhline(y=0, xmin=0, xmax=1, ls=":", lw="1.0", color="black")
         ax.legend(
             fontsize=8,
             loc="lower right",
@@ -276,8 +306,9 @@ class Periodogram(BaseModule):
             - `str`; name of the detected activity class,
             - `None`; the entire signal ROI is used.
         norm : {"density", "power", "dB"}, optional
-            Mode of the plotting norm. If "density", the plot is normalised
-            per channel so that the area sums up to 1.0
+            Mode of the plotting norm. If `"density"`, the plot is normalised
+            per channel so that the area sums up to 1.0. If `"power"`, the raw power
+            is drawn. If `"dB"`, the power gets converted to dB, by default `"desnity"`.
 
         Returns
         -------
@@ -328,4 +359,4 @@ class Periodogram(BaseModule):
         lims = sum([[*ax.get_ylim()] for ax in axs], [])
 
         for ax in axs:
-            ax.set_ylim(0, max(lims))
+            ax.set_ylim(min(min(lims), 0), max(lims))

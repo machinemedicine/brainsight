@@ -16,7 +16,7 @@ class BaseModule(abc.ABC):
     _base_wh: Tuple[int, int] = (10, 3)
 
     def __init__(self, dataset: Dataset, **kwargs) -> None:
-        """Base class for plotting modules.
+        """Base class for modules interacting with `Dataset` instances.
 
         Parameters
         ----------
@@ -95,7 +95,7 @@ class BaseModule(abc.ABC):
     def get_data(
         self,
         channel: str,
-        roi: Optional[Union[Tuple[int, int], str]],
+        roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]],
         **kwargs,
     ):
         """Abstract method for the extraction of plotting data.
@@ -120,7 +120,9 @@ class BaseModule(abc.ABC):
 
     @abc.abstractmethod
     def plot(
-        self, roi: Optional[Union[Tuple[int, int], str]] = None, **kwargs
+        self,
+        roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]] = None,
+        **kwargs,
     ):
         """Abstract method for plotting. Its interface needs
         to be implemented by the child class."""

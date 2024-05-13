@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "brainsight"
-version = "0.2.0"
+version = "0.2.1"
 description = "Analysis toolkit for brain activity data."
 authors = ["MMT Analytics <analytics@machinemedicine.com>"]
 readme = "README.md"
@@ -13,6 +13,13 @@ PyYAML = "~6.0"
 colorcet = "~3.1.0"
 matplotlib = "~3.8.3"
 mne = "~1.7.0"
+
+[tool.poetry.group.dev.dependencies]
+mkdocs-material = "^9.5.19"
+mkdocstrings = {version = "^0.24.3", extras = ["python"]}
+mkdocs-gen-files = "^0.5.0"
+mkdocs-section-index = "^0.3.9"
+mkdocs-literate-nav = "^0.6.1"
 
 [build-system]
 requires = ["poetry-core"]

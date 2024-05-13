@@ -1,3 +1,6 @@
+r"""Contains some default parameters for the plotting modules. 
+"""
+
 BRAINWAVE_BANDS = {
     "delta": (0.0, 4.0),
     "theta": (4.0, 8.0),

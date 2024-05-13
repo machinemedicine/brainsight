@@ -6,7 +6,7 @@ from mne.filter import filter_data
 
 from brainsight import Dataset, Signal
 from brainsight.modules.base_module import BaseModule
-from brainsight.modules.utils import ms_to_str, draw_activity
+from brainsight.modules.utils import ms_to_str, _draw_activity
 
 
 class LFP(BaseModule):
@@ -37,7 +37,7 @@ class LFP(BaseModule):
         * ``low_freq is not None and high_freq is None``: high-pass filter
         * ``low_freq is None and high_freq is not None``: low-pass filter
 
-    For more, see: https://mne.tools/stable/generated/mne.filter.filter_data.html
+    For more details, see: [MNE - filter_data](<https://mne.tools/stable/generated/mne.filter.filter_data.html>)
 
     Methods
     -------
@@ -275,7 +275,7 @@ class LFP(BaseModule):
         ax.set_xlim(*processed.roi)
 
         if show_activity:
-            draw_activity(
+            _draw_activity(
                 activity_dict=self.dataset.ACTIVITY,
                 ax=ax,
                 roi_ms=processed.roi,

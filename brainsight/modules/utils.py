@@ -18,7 +18,7 @@ def str_to_ms(string: str) -> int:
 
 
 def ms_to_str(ms: int) -> str:
-    """Convert a string timestamp into miliseconds."""
+    """Convert miliseconds into a string timestamp."""
     return str(timedelta(milliseconds=int(ms))).split(".")[0]
 
 

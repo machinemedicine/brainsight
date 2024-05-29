@@ -29,7 +29,10 @@ nav:
     - "Welcome": index.md
     - "Install": install.md
     - "Getting started": demo.md
+    - Introduction:
+      - "Multimodal dataset": dataset.md
   - API Reference: reference/
+
 
 watch:
   - brainsight/

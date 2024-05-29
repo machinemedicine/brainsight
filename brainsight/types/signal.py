@@ -72,7 +72,9 @@ class Signal:
     ) -> None:
         if len(values) != len(timestamps):
             raise ValueError(
-                "`values` and `timestamps` of a `Signal` have to be of equal length."
+                "`values` and `timestamps` of a `Signal` have to be of equal length. ({} != {})".format(
+                    len(values), len(timestamps)
+                )
             )
         self._values = np.array(values)
         self._timestamps = np.array(timestamps)

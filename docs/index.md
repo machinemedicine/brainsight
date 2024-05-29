@@ -12,7 +12,7 @@ These modalities include, among others:
 - Pose estimation data,
 - Automatically detected activity regions.
 
-Full description of the dataset creation can be found [here]().
+Full description of the dataset creation can be found [here](dataset.md).
 
 ## Try it out ##
 

@@ -1,4 +1,4 @@
-# Getting started #
+# Getting Started #
 
 To demonstrate the functionality of **BrainSight** we have prepared
 a sample notebook that introduces all of the basic concepts and modules.

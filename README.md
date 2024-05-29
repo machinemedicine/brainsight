@@ -1,6 +1,8 @@
-# BrainSight #
+# Welcome to **BrainSight**'s GitHub page! #
 
-Analysis toolkit for brain activity data.
+BrainSight is a python-based analysis toolkit for brain activity data.
+
+Find out more on our [`documentation page`](https://machinemedicine.github.io/brainsight/).
 
 ### Who do I talk to? ###
 

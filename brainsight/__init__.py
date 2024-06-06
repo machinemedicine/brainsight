@@ -1,6 +1,6 @@
 r"""**BrainSight** accommodates easy and intuitive analysis of local field potential (LFP)
 data captured by the Percept PC device and saved as part of a multimodal data exported through
-the KELVIN platform.
+the Kelvin platform.
 
 [`brainsight.types`](types/__init__.md) contain classes designed to simplify the handling of
 multimodal datasets and timestamp-synchronised signals.

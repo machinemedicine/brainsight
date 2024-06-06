@@ -92,7 +92,7 @@ class Periodogram(BaseModule):
         channel: str,
         roi: Optional[Union[Tuple[int, int], Tuple[str, str], str]],
         **kwargs,
-    ):
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Compute a multitaper PSD for the selected LFP channel
         within the specified ROI.
 

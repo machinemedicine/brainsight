@@ -12,7 +12,7 @@ class _Dataset:
     Parameters
     ----------
     file_or_dict : Union[str, dict]
-        File path to a json file of the dataset downloaded from KELVIN,
+        File path to a json file of the dataset downloaded from Kelvin,
         or the already loaded dataset dictionary.
     name : str
         Name of the nested level.
@@ -98,7 +98,7 @@ class _Dataset:
 
 class Dataset(_Dataset):
     r"""A class for convenient handling of the dataset obtained
-    from the KELVIN platform. It unpacks and formats the json file,
+    from the Kelvin platform. It unpacks and formats the json file,
     and integrates with ``brainsight``'s plotting functionality.
     All levels of the dataset are easily accessible as attributes
     of the initialised Dataset instance.
@@ -107,7 +107,7 @@ class Dataset(_Dataset):
     Parameters
     ----------
     file_or_dict : Union[str, dict]
-        File path to a json file of the dataset downloaded from KELVIN,
+        File path to a json file of the dataset downloaded from Kelvin,
         or the already loaded dataset dictionary.
 
     Attributes

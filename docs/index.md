@@ -12,15 +12,15 @@ These modalities include, among others:
 - Pose estimation data,
 - Automatically detected activity regions.
 
-Full description of the dataset creation can be found [here](../documentation/dataset.md).
+Full description of the dataset creation can be found [here](./documentation/dataset.md).
 
 ## Try it out ##
 
-Find out how to [`install`](./install.md) this cool package.
+Find out how to [`install`](./home/install.md) this cool package.
 
-Then learn how to use it by checking out the [`demo`](./demo.md) notebook.
+Then learn how to use it by checking out the [`demo`](./home/demo.md) notebook.
 
-For more details see the [`docs`](../reference/brainsight/__init__.md)
+For more details see the [`docs`](./reference/brainsight/__init__.md)
 
 ## Who do I talk to? ##
 

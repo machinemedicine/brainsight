@@ -1,5 +1,5 @@
 site_name: "BrainSight"
-site_url: http://127.0.0.1:8000/brainsight  # Set to empty string false if deploying to as files
+site_url: http://127.0.0.1:8000/brainsight/  # Set to empty string false if deploying to as files
 site_description: "BrainSight"
 site_author: "Machine Medicine Team"
 copyright: "2024 MMT"
@@ -38,7 +38,7 @@ markdown_extensions:
 
 nav:
   - Home:
-    - home/index.md
+    - Welcome: index.md
     - Install: home/install.md
     - Getting started: home/demo.md
   - Documentation:

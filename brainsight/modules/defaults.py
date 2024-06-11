@@ -8,3 +8,4 @@ BRAINWAVE_BANDS = {
     "beta": (13.0, 32.0),
     "gamma": (32.0, 120.0),
 }
+"""Default brainwave frequency bands. Used by the `Periodogram` module."""

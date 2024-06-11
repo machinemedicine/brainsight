@@ -15,3 +15,13 @@
     --md-accent-fg-color--light: #DBF4EA;
     --md-accent-fg-color--dark: #1C8968;
 }
+
+/* Adjust width of the navigation sidebar */
+.md-sidebar .md-nav {
+    width: 300px;
+    /* Adjust the width as needed */
+}
+
+.md-sidebar .md-nav__link--active {
+    font-weight: bold;
+}

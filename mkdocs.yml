@@ -1,5 +1,5 @@
 site_name: "BrainSight"
-site_url: http://127.0.0.1:8000/brainsight  # Set to empty string false if deploying to as files
+site_url: http://127.0.0.1:8000/brainsight/  # Set to empty string false if deploying to as files
 site_description: "BrainSight"
 site_author: "Machine Medicine Team"
 copyright: "2024 MMT"
@@ -19,18 +19,35 @@ theme:
     - navigation.instant
     - navigation.tabs
     - navigation.sections
+    - navigation.footer
+    - content.code.copy
   palette:
     scheme: mmt
+
 extra_css:
   - stylesheets/extra.css
 
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+
 nav:
   - Home:
-    - "Welcome": index.md
-    - "Install": install.md
-    - "Getting started": demo.md
-    - Introduction:
-      - "Multimodal dataset": dataset.md
+    - Welcome: index.md
+    - Install: home/install.md
+    - Getting started: home/demo.md
+  - Documentation:
+    - documentation/index.md
+    - Multimodal dataset: documentation/dataset.md
+    - LFP Synchronisation: documentation/synchronisation.md
+    - Tutorials:
+      - documentation/tutorials/index.md
+      - Beta band analysis: documentation/tutorials/beta.md
   - API Reference: reference/
 
 
@@ -49,12 +66,15 @@ plugins:
           options:
             # https://mkdocstrings.github.io/python/usage/
             docstring_style: numpy
+            # show_submodules: True
             show_signature_annotations: True
             show_source: False
             # show_if_no_docstring: True
             merge_init_into_class: True
             show_symbol_type_toc: True
             show_symbol_type_heading: True
+            show_root_heading: False
+            full_name: True
         
   - literate-nav:
       nav_file: SUMMARY.md
